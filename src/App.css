@@ -9,7 +9,7 @@
 }
 
 .App-header {
-  background-color:#393d3f; /* #282c34; */
+  background-color:#393d3f;
   min-height: 95vh;
   display: flex;
   flex-direction: column;
@@ -40,16 +40,17 @@
   align-items: center;
   justify-content: space-between;
   flex-direction: column;
-  padding: 30px 10px;
   overflow: hidden;
 }
 
 .title {
+  padding-top: 20px;
   font-size: 35px;
+  font-family: 'Chelsea Market', cursive;
 }
 
 .timer-box {
-  border: 2px solid #ffffff;
+  border: 3px solid #ffffff;
   min-height: 280px ;
   min-width: 280px;
   border-radius: 50%;
@@ -60,20 +61,22 @@
 }
 
 #time-left {
-  font-size: 70px;;
+  font-size: 70px;
+  padding: 10px 0;
 }
 
-#start_stop, #rest {
+#start_stop, #reset {
   background-color: #eb5e55;
   border: none;
 }
 .controls {
-  margin-top: -40px;
+  margin-top: -20px;
 }
 
 .increments {
   display: flex;
   justify-content: space-around;
+  padding-bottom: 15px;
 }
 
 .increments-left, .increments-right {
@@ -102,8 +105,8 @@ section h5 {
   height: 40px;
   background-color: #eb5e55;
   color: #fff;
-  font-weight: 700;
-  
+  font-weight: 500;
+  font-size: calc(14px + 2vmin);
 }
 
 footer p {
@@ -144,6 +147,8 @@ footer p {
   .adjust {
     width: 25px;
     height: 25px;
+    font-size: calc(10px + 2vmin);
+
   }
 
   .timer-box {

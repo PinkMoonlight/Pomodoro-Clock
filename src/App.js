@@ -1,55 +1,171 @@
-import React from 'react';
-import {ReactComponent as PlayLogo} from './play.svg';
-import {ReactComponent as LoopLogo} from './loop.svg';
-
+import React, {Component} from 'react';
+import Pomodoro from './Pomodora-clock.js';
+import Play from './play.svg';
+import Pause from './pause.svg';
+import Laptop from './laptop.svg';
+import Coffee from './coffee.svg';
 import './App.css';
 
-function App() {
-  return (
+class App extends Component {
+  state = {
+    session: 25,
+    break: 5,
+    isPaused: true,
+    type: 'session',
+    current: null
+  }
+
+  componentDidUpdate() {
+    console.log(this.state);
+  }
+
+  countdown = (end) => {
+
+      let now = new Date().getTime();
+      let distance = end - now;
+      let minutes = Math.floor(distance / (1000 * 60));
+      let seconds = Math.floor((distance % (1000 * 60) / 1000));
+      seconds = seconds < 10 ? `0${seconds}` : seconds;
+
+      document.getElementById('time-left').innerHTML = `${minutes}:${seconds}`;
+      this.setState({ 
+        current: `${minutes}:${seconds}`,
+      })
+
+      if (distance <= 0) {
+        if (this.state.type === 'session') {
+          this.setState({
+          type: 'break'
+        })
+      } else if (this.state.type === 'break') {
+        this.setState({
+          type: 'session'
+        })
+      } else 
+        document.getElementById('time-left').innerHTML = `00:00`;
+        this.stopTimer();
+      } 
+  };
+
+  startTimer = () => {
+    let timer;
+    console.log("countdown begun")  
+    if (this.state.type === "session") {
+      timer = this.state.session;  
+      document.getElementById('timer-label').innerHTML = 'session';
+      document.getElementById('timer-img').setAttribute("src", `${Laptop}`)
+    } else {
+      timer = this.state.break;
+      document.getElementById('timer-label').innerHTML = 'break';
+      document.getElementById('timer-img').setAttribute("src", `${Coffee}`)
+    }
+    let end = new Date().getTime() + (timer * 60 * 1000);
+    this.timerID = setInterval(this.countdown, 1000, end);
+  }
+
+  stopTimer = () => {
+    clearInterval(this.timerID);
+    
+  }
+
+
+  pause = () => {
+    let isPaused = this.state.isPaused;
+    if (isPaused) {
+      document.getElementById("img-play").setAttribute("src", `${Pause}`)
+      this.startTimer();
+      this.setState({
+        isPaused: !isPaused
+      })
+    } else {
+      document.getElementById("img-play").setAttribute("src", `${Play}`)
+      this.stopTimer();
+      this.setState({
+        isPaused: !isPaused,
+      })
+    }
+
+
+  };
+
+ increment = e => {
+  let value = e.target.value;
+  console.log(e.target.value);
+  let num;
+
+  if (value === 'session-increment') {
+    num = this.state.session < 60 ? this.state.session + 1 : this.state.session;
+    document.getElementById('time-left').innerHTML = `${num}:00`;
+    this.setState({
+      session: num
+    })
+  } else {
+    num = this.state.break <60 ? this.state.break + 1 : this.state.break;
+    document.getElementById('time-left').innerHTML = this.state.type === 'break' ? `${num}:00`: `${this.state.session}:00`;
+    this.setState({
+      break: num
+    })
+  }
+ }
+
+ decrement = e => {
+  let value = e.target.value;
+  console.log(e.target.value);
+  let num;
+
+  if (value === 'session-decrement') {
+    num = this.state.session >1 ? this.state.session - 1 : this.state.session;
+    document.getElementById('time-left').innerHTML = `${num}:00`;
+    this.setState({
+      session: num
+    })
+  } else {
+    num = this.state.break >1 ? this.state.break - 1 : this.state.break;
+    document.getElementById('time-left').innerHTML = this.state.type === 'break' ? `${num}:00`: `${this.state.session}:00`;
+    this.setState({
+      break: num
+    })
+  }
+ }
+
+  reset = e => {
+    console.log("reset occurred")
+    document.getElementById("img-play").setAttribute("src", `${Play}`);
+    this.stopTimer();
+    document.getElementById('time-left').innerHTML = `25:00`;
+    this.setState({
+      session: 25,
+      break: 5,
+      isPaused: true,
+      type: 'session',
+      current: null
+    });
+  }
+
+  render() {
+   return  (
     <div className="App">
       <header className="App-header">
-        <div className="container">
-          <h1 className="title">Pomodoro Clock</h1>
-          <div className="timer-box">
-            <div id="timer-label"> Session / Break </div>
-            <div id="time-left">00:00</div>
-            <div> image?</div>
-          </div>
-          <div className="controls">
-            <button id="start_stop">
-              <PlayLogo />
-            </button>
-            <button id="rest">
-              <LoopLogo />
-            </button>
-          </div>
-          <section className="increments">
-            <div className="increments-left">
-              <h5 id="session-label">session length</h5>
-              <button className="adjust" id="session-decrement">-</button>
-              <div id="session-length">25</div>
-              <button className="adjust"id="session-increment">+</button>
-            </div> 
-            <div className="increments-right">
-            <h5 id="break-label">break length</h5>
-              <button className="adjust"id="break-decrement">-</button>
-              <div id="break-length">5</div>
-              <button className="adjust"id="break-increment">+</button>
-            </div> 
-          </section>
-
-        </div>
+        <Pomodoro 
+          session={this.state.session}
+          break={this.state.break}
+          reset={this.reset}
+          increment={this.increment}
+          decrement={this.decrement}
+          pause={this.pause}
+        />
       </header>
       <footer>
-          <p>
-            Designed and coded by{" "}
-            <a className="footer__name-link" href="http://www.katecherie.com">
-              Kate Fisher
-            </a>
-          </p>
-        </footer>
+        <p>
+          Designed and coded by{" "}
+          <a className="footer__name-link" href="http://www.katecherie.com">
+            Kate Fisher
+          </a>
+        </p>
+      </footer>
     </div>
   );
+    }
 }
 
 export default App;
