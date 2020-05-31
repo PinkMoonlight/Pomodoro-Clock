@@ -65,10 +65,12 @@
   padding: 10px 0;
 }
 
-#start_stop, #reset {
+.start_stop, .reset {
   background-color: #eb5e55;
   border: none;
 }
+
+
 .controls {
   margin-top: -20px;
 }
